@@ -12,6 +12,18 @@ class EnvironmentVariables {
   @IsNotEmpty()
   DATABASE_URL: string
 
+  @IsString()
+  @IsNotEmpty()
+  DATABASE_USER: string
+
+  @IsString()
+  @IsNotEmpty()
+  DATABASE_PASSWORD: string
+
+  @IsString()
+  @IsNotEmpty()
+  DATABASE_NAME: string
+
   @IsNumber()
   @IsOptional()
   PORT: number = 8080

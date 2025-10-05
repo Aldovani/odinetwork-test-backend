@@ -1,13 +1,13 @@
 services:
 
-database:
-    image: postgres:13
-
+  database:
+    image: bitnami/postgresql:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - .:/usr/src/database
     environment:
-      PORT: ${PORT}
-      DATABASE_URL: ${DATABASE_URL}
-    networks:
-      - cloud-journey-backend
-    depends_on:
-      - database
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
 
