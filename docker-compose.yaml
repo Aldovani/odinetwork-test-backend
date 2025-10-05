@@ -1,0 +1,13 @@
+services:
+
+database:
+    image: postgres:13
+
+    environment:
+      PORT: ${PORT}
+      DATABASE_URL: ${DATABASE_URL}
+    networks:
+      - cloud-journey-backend
+    depends_on:
+      - database
+
