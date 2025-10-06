@@ -1,0 +1,66 @@
+import { Injectable } from '@nestjs/common'
+import { Department } from 'src/commons/entities/department'
+import { PrismaService } from '../../prisma.service'
+import { DepartmentRepository } from '../department-repository'
+import { PrismaDepartmentMapper } from './mappers/prisma-department-mapper'
+
+@Injectable()
+export class PrismaDepartmentRepository implements DepartmentRepository {
+  constructor(private readonly prismaService: PrismaService) {}
+  async findById(departmentId: number): Promise<Department | null> {
+    const department = await this.prismaService.department.findUnique({
+      where: {
+        id: departmentId,
+      },
+    })
+
+    if (!department) return null
+
+    return PrismaDepartmentMapper.toDomain(department)
+  }
+
+  async create(props: { name: string }): Promise<Department> {
+    const department = await this.prismaService.department.create({
+      data: { name: props.name },
+    })
+
+    return PrismaDepartmentMapper.toDomain(department)
+  }
+
+  async delete(departmentId: number): Promise<void> {
+    await this.prismaService.department.delete({
+      where: {
+        id: departmentId,
+      },
+    })
+  }
+
+  async findAll(): Promise<Department[]> {
+    const departments = await this.prismaService.department.findMany({})
+
+    return departments.map(PrismaDepartmentMapper.toDomain)
+  }
+
+  async findByName(name: string): Promise<Department | null> {
+    const department = await this.prismaService.department.findUnique({
+      where: {
+        name,
+      },
+    })
+
+    if (!department) return null
+
+    return PrismaDepartmentMapper.toDomain(department)
+  }
+
+  async save(department: Department): Promise<Department> {
+    const data = await this.prismaService.department.update({
+      data: PrismaDepartmentMapper.toPrisma(department),
+      where: {
+        id: department.id,
+      },
+    })
+
+    return PrismaDepartmentMapper.toDomain(data)
+  }
+}
