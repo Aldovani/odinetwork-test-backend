@@ -19,6 +19,7 @@ model Department {
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @default(now()) @map("updated_at")
   Employee  Employee[]
+  Asset     Asset[]
 
   @@map("departments")
 }
@@ -33,6 +34,28 @@ model Employee {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
+  Asset     Asset[]
 
   @@map("employees")
+}
+
+model Asset {
+  id Int @id @default(autoincrement())
+
+  prefix       String  @db.Char(2)
+  serialNumber Int     @map("serial_number")
+  IMEI         String? @unique
+
+  name String
+
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId Int?        @map("department_id") @db.Integer
+
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId Int?       @map("employee_id") @db.Integer
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("assets")
 }
