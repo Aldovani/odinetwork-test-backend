@@ -8,7 +8,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common'
-import { DepartmentPresenter } from 'src/shared/presenters/departmant-presenter'
+import { DepartmentPresenter } from 'src/shared/presenters/department-presenter'
 import { DepartmentService } from './department.service'
 import { CreateDepartmentDTO } from './dto/create-department'
 import { UpdateDepartmentDTO } from './dto/update-department'
