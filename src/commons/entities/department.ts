@@ -2,8 +2,8 @@ import { Entity } from './entity'
 
 export type DepartmentProps = {
   name: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export class Department extends Entity<DepartmentProps, number> {
@@ -21,14 +21,6 @@ export class Department extends Entity<DepartmentProps, number> {
 
   set name(name: string) {
     this.props.name = name
-  }
-
-  set createdAt(createdAt: Date) {
-    this.props.createdAt = createdAt
-  }
-
-  set updatedAt(updatedAt: Date) {
-    this.props.updatedAt = updatedAt
   }
 
   static create(props: DepartmentProps, id?: number) {

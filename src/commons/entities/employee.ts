@@ -51,14 +51,6 @@ export class Employee extends Entity<EmployeeProps, number> {
     this.props.departmentId = departmentId
   }
 
-  set createdAt(createdAt: Date | undefined) {
-    this.props.createdAt = createdAt
-  }
-
-  set updatedAt(updatedAt: Date | undefined) {
-    this.props.updatedAt = updatedAt
-  }
-
   static create(props: EmployeeProps, id?: number) {
     const employee = new Employee(props, id)
 

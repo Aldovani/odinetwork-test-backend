@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common'
-import { DepartmentService } from '../department/department.service'
+import { DepartmentModule } from '../department/department.module'
 import { EmployeeController } from './employee.controller'
 import { EmployeeService } from './employee.service'
-import { DepartmentModule } from '../department/department.module'
+import { IEmployeeService } from './interface/employee-service.interface'
 
 @Module({
   controllers: [EmployeeController],
-  providers: [EmployeeService, DepartmentService],
+  providers: [{ provide: IEmployeeService, useClass: EmployeeService }],
+  exports: [{ provide: IEmployeeService, useClass: EmployeeService }],
   imports: [DepartmentModule],
 })
 export class EmployeeModule {}

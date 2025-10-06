@@ -11,11 +11,11 @@ import {
 import { EmployeePresenter } from 'src/shared/presenters/employee-presenter'
 import { CreateEmployeeDTO } from './dto/create-employee'
 import { UpdateEmployeeDTO } from './dto/update-employee'
-import { EmployeeService } from './employee.service'
+import { IEmployeeService } from './interface/employee-service.interface'
 
 @Controller('employee')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+  constructor(private readonly employeeService: IEmployeeService) {}
 
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) employeeId: number) {
