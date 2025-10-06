@@ -14,10 +14,25 @@ datasource db {
 }
 
 model Department {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @default(now()) @map("updated_at")
+  Employee  Employee[]
+
+  @@map("departments")
+}
+
+model Employee {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
+
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int        @map("department_id") @db.Integer
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  @@map("department")
+  @@map("employees")
 }
