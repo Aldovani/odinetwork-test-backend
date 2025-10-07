@@ -2,7 +2,7 @@ import { Employee } from 'src/commons/entities/employee'
 
 export class EmployeePresenter {
   static toHTTP(data: Employee) {
-    const attempt = {
+    const employee = {
       id: data?.id,
       name: data.name,
       email: data.email,
@@ -13,10 +13,10 @@ export class EmployeePresenter {
       createdAt: data.createdAt,
     }
 
-    return attempt
+    return employee
   }
 
   static manyToHttp(data: Employee[]) {
-    return data.map((department) => EmployeePresenter.toHTTP(department))
+    return data.map((employee) => EmployeePresenter.toHTTP(employee))
   }
 }

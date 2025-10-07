@@ -2,7 +2,7 @@ import { Asset } from 'src/commons/entities/asset'
 
 export class AssetPresenter {
   static toHTTP(data: Asset) {
-    const attempt = {
+    const asset = {
       id: data.id,
       name: data.name,
       IMEI: data.IMEI,
@@ -19,10 +19,10 @@ export class AssetPresenter {
       createdAt: data.createdAt,
     }
 
-    return attempt
+    return asset
   }
 
   static manyToHttp(data: Asset[]) {
-    return data.map((department) => AssetPresenter.toHTTP(department))
+    return data.map((asset) => AssetPresenter.toHTTP(asset))
   }
 }
