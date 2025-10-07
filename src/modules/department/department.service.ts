@@ -4,13 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { Department } from 'src/commons/entities/department'
-import { DepartmentRepository } from 'src/shared/database/repositories/department-repository'
+import { PrismaDepartmentRepository } from 'src/shared/database/repositories/prisma/prisma-department-repository'
 import { CreateDepartmentDTO } from './dto/create-department'
-import { IDepartmentService } from './interface/department'
 
 @Injectable()
-export class DepartmentService implements IDepartmentService {
-  constructor(private readonly departmentRepository: DepartmentRepository) {}
+export class DepartmentService {
+  constructor(
+    private readonly departmentRepository: PrismaDepartmentRepository,
+  ) {}
 
   async getDepartmentById(departmentId: number) {
     const department = await this.departmentRepository.findById(departmentId)

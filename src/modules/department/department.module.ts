@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
+import { PrismaDepartmentRepository } from 'src/shared/database/repositories/prisma/prisma-department-repository'
 import { DepartmentController } from './department.controller'
 import { DepartmentService } from './department.service'
-import { IDepartmentService } from './interface/department'
 
 @Module({
   controllers: [DepartmentController],
-  providers: [{ useClass: DepartmentService, provide: IDepartmentService }],
-  exports: [{ useClass: DepartmentService, provide: IDepartmentService }],
+  providers: [DepartmentService, PrismaDepartmentRepository],
+  exports: [],
 })
 export class DepartmentModule {}

@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { Department } from 'src/commons/entities/department'
 import { PrismaService } from '../../prisma.service'
-import { DepartmentRepository } from '../department-repository'
 import { PrismaDepartmentMapper } from './mappers/prisma-department-mapper'
 
 @Injectable()
-export class PrismaDepartmentRepository implements DepartmentRepository {
+export class PrismaDepartmentRepository {
   constructor(private readonly prismaService: PrismaService) {}
   async findById(departmentId: number): Promise<Department | null> {
     const department = await this.prismaService.department.findUnique({

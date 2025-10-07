@@ -1,18 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Asset } from 'src/commons/entities/asset'
-import { AssetRepository } from 'src/shared/database/repositories/asset-repository'
-import { IDepartmentService } from '../department/interface/department'
-import { IEmployeeService } from '../employee/interface/employee-service.interface'
+import { PrismaAssetRepository } from 'src/shared/database/repositories/prisma/prisma-asset-repository'
+import { DepartmentService } from '../department/department.service'
+import { EmployeeService } from '../employee/employee.service'
 import { CreateAssetDTO } from './dto/create-asset'
 import { UpdateAssetDTO } from './dto/update-asset'
-import { IAssetService } from './interface/asset-service.interface'
 
 @Injectable()
-export class AssetService implements IAssetService {
+export class AssetService {
   constructor(
-    private readonly assetRepository: AssetRepository,
-    private readonly employeeService: IEmployeeService,
-    private readonly departmentService: IDepartmentService,
+    private readonly assetRepository: PrismaAssetRepository,
+    private readonly employeeService: EmployeeService,
+    private readonly departmentService: DepartmentService,
   ) {}
 
   async getById(id: number) {

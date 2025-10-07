@@ -4,17 +4,16 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { Employee } from 'src/commons/entities/employee'
-import { EmployeeRepository } from 'src/shared/database/repositories/employee-repository'
+import { PrismaEmployeeRepository } from 'src/shared/database/repositories/prisma/prisma-employee-repository'
 import { DepartmentService } from '../department/department.service'
 import { CreateEmployeeDTO } from './dto/create-employee'
 import { UpdateEmployeeDTO } from './dto/update-employee'
-import { IEmployeeService } from './interface/employee-service.interface'
 
 @Injectable()
-export class EmployeeService implements IEmployeeService {
+export class EmployeeService {
   constructor(
     private readonly departmentService: DepartmentService,
-    private readonly employeeRepository: EmployeeRepository,
+    private readonly employeeRepository: PrismaEmployeeRepository,
   ) {}
 
   async getById(id: number) {

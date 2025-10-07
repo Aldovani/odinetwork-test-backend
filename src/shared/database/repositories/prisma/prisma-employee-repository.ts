@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { Employee } from 'src/commons/entities/employee'
 import { PrismaService } from '../../prisma.service'
-import { EmployeeRepository } from '../employee-repository'
 import { PrismaEmployeeMapper } from './mappers/prisma-employee-mapper'
 
 @Injectable()
-export class PrismaEmployeeRepository implements EmployeeRepository {
+export class PrismaEmployeeRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findById(id: number): Promise<Employee | null> {

@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { Asset } from 'src/commons/entities/asset'
 import { PrismaService } from '../../prisma.service'
-import { AssetRepository } from '../asset-repository'
 import { PrismaAssertMapper } from './mappers/prisma-asset-mapper'
 
 @Injectable()
-export class PrismaAssetRepository implements AssetRepository {
+export class PrismaAssetRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findById(id: number): Promise<Asset | null> {

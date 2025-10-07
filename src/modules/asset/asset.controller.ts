@@ -9,13 +9,13 @@ import {
   Put,
 } from '@nestjs/common'
 import { AssetPresenter } from 'src/shared/presenters/asset-presenter'
+import { AssetService } from './asset.service'
 import { CreateAssetDTO } from './dto/create-asset'
 import { UpdateAssetDTO } from './dto/update-asset'
-import { IAssetService } from './interface/asset-service.interface'
 
 @Controller('asset')
 export class AssetController {
-  constructor(private readonly assetService: IAssetService) {}
+  constructor(private readonly assetService: AssetService) {}
 
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) assetId: number) {
