@@ -42,6 +42,16 @@ A stack utilizada segue estritamente as tecnologias sugeridas no desafio:
 
 ---
 
+## 💅 Código Limpo e Padronizado
+
+Para garantir a qualidade e a consistência do código, este projeto está configurado com as seguintes ferramentas:
+
+* **ESLint:** Ferramenta de linting para identificar e corrigir problemas no código JavaScript/TypeScript.
+* **Prettier:** Formatador de código para manter um estilo consistente em todo o projeto.
+* **Husky:** Ferramenta para gerenciar hooks do Git, garantindo que a qualidade do código seja verificada antes de cada commit.
+
+Um hook de `pre-commit` foi configurado. Antes de cada commit, o Husky irá executar o ESLint e o Prettier para garantir que o código enviado ao repositório esteja formatado e livre de erros de linting.
+
 ## 🗃️ Esquema do Banco de Dados
 
 Este projeto requer um planejamento documentado, incluindo um esquema do banco de dados. Abaixo está a estrutura em DBML, que pode ser visualizada em ferramentas como o [dbdiagram.io](https://dbdiagram.io).
