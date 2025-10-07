@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Department } from 'src/commons/entities/department'
+import { PaginationProps } from 'src/commons/types/pagination'
 import { PrismaService } from '../../prisma.service'
 import { PrismaDepartmentMapper } from './mappers/prisma-department-mapper'
 
@@ -34,10 +35,22 @@ export class PrismaDepartmentRepository {
     })
   }
 
-  async findAll(): Promise<Department[]> {
-    const departments = await this.prismaService.department.findMany({})
+  async findAll({
+    page,
+    perPage,
+  }: PaginationProps): Promise<[Department[], number]> {
+    const [departments, totalOFDepartments] = await Promise.all([
+      this.prismaService.department.findMany({
+        skip: perPage * (page - 1),
+        take: perPage,
+      }),
+      this.prismaService.department.count(),
+    ])
 
-    return departments.map(PrismaDepartmentMapper.toDomain)
+    return [
+      departments.map(PrismaDepartmentMapper.toDomain),
+      totalOFDepartments,
+    ]
   }
 
   async findByName(name: string): Promise<Department | null> {

@@ -4,6 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { Department } from 'src/commons/entities/department'
+import {
+  PaginationMetadataProps,
+  PaginationProps,
+} from 'src/commons/types/pagination'
 import { PrismaDepartmentRepository } from 'src/shared/database/repositories/prisma/prisma-department-repository'
 import { CreateDepartmentDTO } from './dto/create-department'
 
@@ -19,10 +23,24 @@ export class DepartmentService {
     return department
   }
 
-  async getDepartments(): Promise<Department[]> {
-    const department = await this.departmentRepository.findAll()
+  async getDepartments({ page, perPage }: PaginationProps): Promise<{
+    departments: Department[]
+    metadata: PaginationMetadataProps
+  }> {
+    const [departments, totalOfDepartments] =
+      await this.departmentRepository.findAll({
+        page,
+        perPage,
+      })
 
-    return department
+    const metadata = {
+      currentPage: page,
+      perPage,
+      totalOfPages: Math.round(totalOfDepartments / page),
+      totalOfItems: totalOfDepartments,
+    }
+
+    return { metadata, departments }
   }
 
   async create({ name }: CreateDepartmentDTO): Promise<Department> {
