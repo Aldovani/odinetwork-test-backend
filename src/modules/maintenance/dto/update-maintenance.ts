@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsDateString, IsNotEmpty, IsString } from 'class-validator'
 
 export class UpdateMaintenanceDTO {
   @IsString()
@@ -8,12 +8,4 @@ export class UpdateMaintenanceDTO {
   @IsDateString()
   @IsNotEmpty()
   completionDate: Date
-
-  @IsDateString()
-  @IsNotEmpty()
-  entryDate: Date
-
-  @IsNumber()
-  @IsNotEmpty()
-  assetId: number
 }

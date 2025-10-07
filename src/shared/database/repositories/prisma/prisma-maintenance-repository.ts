@@ -20,6 +20,32 @@ export class PrismaMaintenanceRepository {
     return PrismaMaintenanceMapper.toDomain(maintenance)
   }
 
+  async findByAssetId(id: number): Promise<Maintenance | null> {
+    const maintenance = await this.prismaService.maintenance.findFirst({
+      where: {
+        assetId: id,
+        AND: {
+          completionDate: {
+            equals: null,
+          },
+        },
+      },
+      include: { asset: true },
+    })
+
+    if (!maintenance) return null
+
+    return PrismaMaintenanceMapper.toDomain(maintenance)
+  }
+
+  async findAll(): Promise<Maintenance[]> {
+    const maintenance = await this.prismaService.maintenance.findMany({
+      include: { asset: true },
+    })
+
+    return maintenance.map(PrismaMaintenanceMapper.toDomain)
+  }
+
   async create(maintenance: Maintenance): Promise<Maintenance> {
     const data = await this.prismaService.maintenance.create({
       ...PrismaMaintenanceMapper.toPrisma(maintenance),
@@ -29,22 +55,6 @@ export class PrismaMaintenanceRepository {
     })
 
     return PrismaMaintenanceMapper.toDomain(data)
-  }
-
-  async delete(id: number): Promise<void> {
-    await this.prismaService.maintenance.delete({
-      where: {
-        id,
-      },
-    })
-  }
-
-  async findAll(): Promise<Maintenance[]> {
-    const maintenance = await this.prismaService.maintenance.findMany({
-      include: { asset: true },
-    })
-
-    return maintenance.map(PrismaMaintenanceMapper.toDomain)
   }
 
   async save(maintenance: Maintenance): Promise<Maintenance> {
@@ -59,5 +69,13 @@ export class PrismaMaintenanceRepository {
     })
 
     return PrismaMaintenanceMapper.toDomain(data)
+  }
+
+  async delete(id: number): Promise<void> {
+    await this.prismaService.maintenance.delete({
+      where: {
+        id,
+      },
+    })
   }
 }

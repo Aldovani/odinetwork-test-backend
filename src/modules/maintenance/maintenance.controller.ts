@@ -54,12 +54,10 @@ export class MaintenanceController {
     @Param('id', ParseIntPipe) maintenanceId: number,
     @Body() body: UpdateMaintenanceDTO,
   ) {
-    const { assetId, completionDate, entryDate, problemDescription } = body
+    const { completionDate, problemDescription } = body
 
     const asset = await this.maintenanceService.update(maintenanceId, {
-      assetId,
       completionDate,
-      entryDate,
       problemDescription,
     })
     return MaintenancePresenter.toHTTP(asset)

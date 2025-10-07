@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { Maintenance } from 'src/commons/entities/maintenance'
 import { PrismaMaintenanceRepository } from 'src/shared/database/repositories/prisma/prisma-maintenance-repository'
 import { AssetService } from '../asset/asset.service'
@@ -36,6 +40,12 @@ export class MaintenanceService {
       problemDescription,
     })
 
+    const isAssetInMaintenance =
+      await this.maintenanceRepository.findByAssetId(assetId)
+
+    if (isAssetInMaintenance)
+      throw new BadRequestException('Asset already in maintenance')
+
     const maintenance = await this.maintenanceRepository.create(rawMaintenance)
 
     return maintenance
@@ -44,14 +54,10 @@ export class MaintenanceService {
   async update(id: number, props: UpdateMaintenanceDTO): Promise<Maintenance> {
     const maintenanceExist = await this.getById(id)
 
-    if (props.assetId !== maintenanceExist.assetId) {
-      const assetExist = await this.assetService.getById(props.assetId)
+    if (maintenanceExist.completionDate)
+      throw new BadRequestException('Maintenance already finished')
 
-      maintenanceExist.asset = assetExist
-    }
-    maintenanceExist.assetId = props.assetId
     maintenanceExist.completionDate = props.completionDate
-    maintenanceExist.entryDate = props.entryDate
     maintenanceExist.problemDescription = props.problemDescription
 
     const asset = await this.maintenanceRepository.save(maintenanceExist)
