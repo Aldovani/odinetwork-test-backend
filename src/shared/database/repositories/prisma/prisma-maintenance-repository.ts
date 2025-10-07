@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
   Maintenance,
+  MAINTENANCE_STATUS,
   MaintenanceStatus,
 } from 'src/commons/entities/maintenance'
 import { PrismaService } from '../../prisma.service'
@@ -58,29 +59,22 @@ export class PrismaMaintenanceRepository {
         skip: perPage * (page - 1),
         take: perPage,
         where: {
-          AND: {
-            completionDate: {
-              equals:
-                status === 'IN_PROGRESS'
-                  ? null
-                  : status === 'FINISHED'
-                    ? ''
-                    : '',
-            },
-          },
+          completionDate:
+            status === 'IN_PROGRESS'
+              ? {
+                  equals: null,
+                }
+              : status === 'FINISHED'
+                ? { notIn: null }
+                : {},
         },
       }),
       this.prismaService.maintenance.count({
         where: {
-          AND: {
-            completionDate: {
-              equals:
-                status === 'IN_PROGRESS'
-                  ? null
-                  : status === 'FINISHED'
-                    ? ''
-                    : '',
-            },
+          completionDate: status && {
+            notIn: status === MAINTENANCE_STATUS.FINISHED ? null : undefined,
+            equals:
+              status === MAINTENANCE_STATUS.IN_PROGRESS ? null : undefined,
           },
         },
       }),

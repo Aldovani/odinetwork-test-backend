@@ -10,8 +10,8 @@ import { MaintenanceService } from './maintenance.service'
   providers: [
     MaintenanceService,
     AssetService,
-    DepartmentService,
     EmployeeService,
+    DepartmentService,
   ],
 })
 export class MaintenanceModule {}

@@ -1,16 +1,20 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseEnumPipe,
   ParseIntPipe,
   Post,
   Put,
   Query,
 } from '@nestjs/common'
-import type { MaintenanceStatus } from 'src/commons/entities/maintenance'
-import { OptionalParseEnumPipe } from 'src/shared/pipes/optional-parse-enum-pipe'
+import {
+  MAINTENANCE_STATUS,
+  type MaintenanceStatus,
+} from 'src/commons/entities/maintenance'
 import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 import { MaintenancePresenter } from 'src/shared/presenters/maintenance-presenter'
 import { CreateMaintenanceDTO } from './dto/create-maintenance'
@@ -32,8 +36,12 @@ export class MaintenanceController {
   async getAll(
     @Query('page', OptionalParseIntPipe) page: number = 1,
     @Query('perPage', OptionalParseIntPipe) perPage: number = 1,
-    @Query('status', OptionalParseEnumPipe)
-    status: MaintenanceStatus | undefined,
+    @Query(
+      'status',
+      new DefaultValuePipe(undefined),
+      new ParseEnumPipe(MAINTENANCE_STATUS, { optional: true }),
+    )
+    status: MaintenanceStatus,
   ) {
     const { data, metadata } = await this.maintenanceService.getAll({
       page,
