@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Employee } from 'src/commons/entities/employee'
+import { PaginationProps } from 'src/commons/types/pagination'
 import { PrismaService } from '../../prisma.service'
 import { PrismaEmployeeMapper } from './mappers/prisma-employee-mapper'
 
@@ -41,12 +42,34 @@ export class PrismaEmployeeRepository {
     })
   }
 
-  async findAll(): Promise<Employee[]> {
-    const employees = await this.prismaService.employee.findMany({
-      include: { department: true },
-    })
+  async findAll({
+    page,
+    perPage,
+    search,
+  }: PaginationProps & { search: string }): Promise<[Employee[], number]> {
+    const [employees, totalOfEmployees] = await Promise.all([
+      this.prismaService.employee.findMany({
+        include: { department: true },
+        skip: perPage * (page - 1),
+        take: perPage,
+        where: {
+          name: {
+            mode: 'insensitive',
+            contains: search,
+          },
+        },
+      }),
+      this.prismaService.employee.count({
+        where: {
+          name: {
+            mode: 'insensitive',
+            contains: search,
+          },
+        },
+      }),
+    ])
 
-    return employees.map(PrismaEmployeeMapper.toDomain)
+    return [employees.map(PrismaEmployeeMapper.toDomain), totalOfEmployees]
   }
 
   async findByEmail(email: string): Promise<Employee | null> {

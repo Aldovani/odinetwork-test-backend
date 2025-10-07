@@ -4,6 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { Employee } from 'src/commons/entities/employee'
+import {
+  PaginationMetadataProps,
+  PaginationProps,
+} from 'src/commons/types/pagination'
 import { PrismaEmployeeRepository } from 'src/shared/database/repositories/prisma/prisma-employee-repository'
 import { DepartmentService } from '../department/department.service'
 import { CreateEmployeeDTO } from './dto/create-employee'
@@ -22,10 +26,29 @@ export class EmployeeService {
     return employee
   }
 
-  async getAll(): Promise<Employee[]> {
-    const employees = await this.employeeRepository.findAll()
+  async getAll({
+    page,
+    perPage,
+    search,
+  }: PaginationProps & { search: string }): Promise<{
+    employees: Employee[]
+    metadata: PaginationMetadataProps
+  }> {
+    const [employees, totalOfEmployees] = await this.employeeRepository.findAll(
+      { page, perPage, search },
+    )
 
-    return employees
+    const metadata = {
+      currentPage: page,
+      perPage,
+      totalOfPages: Math.round(totalOfEmployees / page),
+      totalOfItems: totalOfEmployees,
+    }
+
+    return {
+      metadata,
+      employees,
+    }
   }
 
   async create({

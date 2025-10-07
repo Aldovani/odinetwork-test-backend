@@ -1,10 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Asset } from 'src/commons/entities/asset'
+import { ServicePaginationResponse } from 'src/commons/types/pagination'
 import { PrismaAssetRepository } from 'src/shared/database/repositories/prisma/prisma-asset-repository'
 import { DepartmentService } from '../department/department.service'
 import { EmployeeService } from '../employee/employee.service'
 import { CreateAssetDTO } from './dto/create-asset'
 import { UpdateAssetDTO } from './dto/update-asset'
+
+type AssetServiceGetAllRequestProps = {
+  page: number
+  perPage: number
+  serialNumber: number
+  search: string
+  imei: string
+  prefix: string
+}
 
 @Injectable()
 export class AssetService {
@@ -20,10 +30,28 @@ export class AssetService {
     return asset
   }
 
-  async getAll(): Promise<Asset[]> {
-    const assets = await this.assetRepository.findAll()
+  async getAll(
+    props: AssetServiceGetAllRequestProps,
+  ): Promise<ServicePaginationResponse<Asset[]>> {
+    const { imei, page, perPage, prefix, search, serialNumber } = props
 
-    return assets
+    const [assets, totalOfAssets] = await this.assetRepository.findAll({
+      imei,
+      page,
+      perPage,
+      prefix,
+      search,
+      serialNumber,
+    })
+
+    const metadata = {
+      currentPage: page,
+      perPage,
+      totalOfPages: Math.round(totalOfAssets / page),
+      totalOfItems: totalOfAssets,
+    }
+
+    return { metadata, data: assets }
   }
 
   async create(props: CreateAssetDTO): Promise<Asset> {

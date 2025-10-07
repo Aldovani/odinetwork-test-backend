@@ -7,7 +7,9 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common'
+import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 import { EmployeePresenter } from 'src/shared/presenters/employee-presenter'
 import { CreateEmployeeDTO } from './dto/create-employee'
 import { UpdateEmployeeDTO } from './dto/update-employee'
@@ -25,9 +27,20 @@ export class EmployeeController {
   }
 
   @Get()
-  async getAll() {
-    const employees = await this.employeeService.getAll()
-    return EmployeePresenter.manyToHttp(employees)
+  async getAll(
+    @Query('page', OptionalParseIntPipe) page: number = 1,
+    @Query('page', OptionalParseIntPipe) perPage: number = 1,
+    @Query('search') search: string = '',
+  ) {
+    const { employees, metadata } = await this.employeeService.getAll({
+      page,
+      perPage,
+      search,
+    })
+    return {
+      metadata,
+      data: EmployeePresenter.manyToHttp(employees),
+    }
   }
 
   @Post()

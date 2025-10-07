@@ -9,3 +9,8 @@ export type PaginationMetadataProps = {
   totalOfItems: number
   totalOfPages: number
 }
+
+export type ServicePaginationResponse<T> = {
+  metadata: PaginationMetadataProps
+  data: T
+}

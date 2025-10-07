@@ -7,7 +7,9 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common'
+import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 import { AssetPresenter } from 'src/shared/presenters/asset-presenter'
 import { AssetService } from './asset.service'
 import { CreateAssetDTO } from './dto/create-asset'
@@ -25,9 +27,23 @@ export class AssetController {
   }
 
   @Get()
-  async getAll() {
-    const employees = await this.assetService.getAll()
-    return AssetPresenter.manyToHttp(employees)
+  async getAll(
+    @Query('page', OptionalParseIntPipe) page: number = 1,
+    @Query('page', OptionalParseIntPipe) perPage: number = 1,
+    @Query('serialNumber', OptionalParseIntPipe) serialNumber: number,
+    @Query('search') search: string = '',
+    @Query('imei') imei: string = '',
+    @Query('prefix') prefix: string = '',
+  ) {
+    const { data, metadata } = await this.assetService.getAll({
+      page,
+      perPage,
+      serialNumber,
+      search,
+      imei,
+      prefix,
+    })
+    return { metadata, data: AssetPresenter.manyToHttp(data) }
   }
 
   @Post()
