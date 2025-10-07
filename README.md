@@ -1,98 +1,174 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Awesome Works - IT Asset Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API desenvolvida como solução para o desafio técnico da Etapa 3. O objetivo é criar um sistema de back-end para gerenciar ativos de TI, seus responsáveis, localizações e histórico de manutenção.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📝 Sobre o Projeto
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Este projeto é a solução para um cenário hipotético apresentado pela empresa Awesome Works. O gestor de TI, João Rodrigues, relatou a necessidade de um sistema para substituir o controle de ativos feito em planilhas Excel.
 
-## Project setup
+Os principais problemas a serem resolvidos são:
+* Falta de registro sobre a localização dos equipamentos nos mais de 15 setores da empresa.
+* Ausência de informação sobre qual colaborador é responsável por cada equipamento.
+* Inexistência de um histórico de atendimentos e reparos quando um dispositivo apresenta defeito.
 
-```bash
-$ npm install
+Esta API centraliza todas essas informações, criando uma fonte de verdade única para o gerenciamento de patrimônio de TI.
+
+---
+
+## ✨ Features
+
+* **Gestão de Ativos (Assets):** CRUD completo para equipamentos.
+* **Gestão de Colaboradores (Employees):** CRUD completo para colaboradores.
+* **Gestão de Departamentos (Departments):** CRUD completo para os setores da empresa.
+* **Rastreamento de Manutenção (Maintenance):** Registro e acompanhamento do histórico de reparos de cada ativo.
+* **Validação de Dados:** Validação de todas as entradas da API usando DTOs.
+* **Documentação Interativa:** API totalmente documentada com Swagger.
+
+---
+
+## 🛠️ Stack Técnica
+
+A stack utilizada segue estritamente as tecnologias sugeridas no desafio:
+
+* **Framework:** Nest.js
+* **Linguagem:** TypeScript
+* **Banco de Dados:** PostgreSQL
+* **ORM:** Prisma
+* **Validação:** `class-validator` e `class-transformer`
+* **Testes:** Jest (Testes automatizados como diferencial)
+* **Documentação:** Swagger (Documentação como diferencial)
+
+---
+
+## 🗃️ Esquema do Banco de Dados
+
+Este projeto requer um planejamento documentado, incluindo um esquema do banco de dados. Abaixo está a estrutura em DBML, que pode ser visualizada em ferramentas como o [dbdiagram.io](https://dbdiagram.io).
+
+```dbml
+Table departments {
+  id integer [pk, increment]
+  name varchar [unique, not null]
+  created_at timestamp [default: `now()`, not null]
+  updated_at timestamp [default: `now()`, not null]
+}
+
+Table employees {
+  id integer [pk, increment]
+  name varchar [not null]
+  email varchar [unique, not null]
+  department_id integer [not null]
+  created_at timestamp [default: `now()`, not null]
+  updated_at timestamp [default: `now()`, not null]
+}
+
+Table assets {
+  id integer [pk, increment]
+  prefix char(2) [not null]
+  serial_number integer [not null]
+  IMEI varchar [unique]
+  name varchar [not null]
+  department_id integer
+  employee_id integer
+  created_at timestamp [default: `now()`, not null]
+  updated_at timestamp [default: `now()`, not null]
+}
+
+Table maintenances {
+  id integer [pk, increment]
+  problem_description text [not null]
+  entry_date timestamp [not null]
+  completion_date timestamp
+  asset_id integer [not null]
+  created_at timestamp [default: `now()`, not null]
+  updated_at timestamp [default: `now()`, not null]
+}
+
+// Definição dos Relacionamentos
+Ref: departments.id < employees.department_id
+Ref: departments.id < assets.department_id
+Ref: employees.id < assets.employee_id
+Ref: assets.id < maintenances.asset_id
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 📖 API Documentation
 
-# watch mode
-$ npm run start:dev
+A documentação completa dos endpoints está disponível via Swagger. Após iniciar a aplicação, acesse:
 
-# production mode
-$ npm run start:prod
+**[http://localhost:3000/api](http://localhost:3000)**
+
+---
+
+## 📥 Coleção da API (Insomnia)
+
+[cite_start]Conforme os requisitos do desafio, uma coleção de requisições da API está incluída neste repositório. O arquivo pode ser encontrado na pasta `/insomnia` na raiz do projeto.
+
+Para utilizar:
+1.  Abra o Insomnia.
+2.  Vá para `Application` > `Preferences` > `Data`.
+3.  Clique em `Import Data` > `From File` e selecione o arquivo JSON da pasta `/insomnia`.
+
+---
+
+
+
+## 🚀 Como Executar o Projeto
+
+Siga os passos abaixo para configurar e executar o projeto em seu ambiente local.
+
+### Pré-requisitos
+
+* Node.js (v20 ou superior)
+* NPM ou Yarn
+* Docker (para uma instância do PostgreSQL) ou uma instalação local do PostgreSQL.
+
+### Instalação
+
+1.  **Clone o repositório**
+    ```sh
+    git clone [https://github.com/Aldovani/odinetwork-test-backend](https://github.com/Aldovani/odinetwork-test-backend.git)
+    ```
+
+2.  **Instale as dependências**
+    ```sh
+    cd odinetwork-test-backend
+    npm install
+    ```
+
+3.  **Configure as variáveis de ambiente**
+    Crie uma cópia do arquivo `.env.example` e renomeie para `.env`. Em seguida, preencha as variáveis
+    ```
+    # .env
+    DATABASE_USER=root
+    DATABASE_PASSWORD=root
+    DATABASE_NAME=test
+    PORT=8080
+    DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
+    ```
+
+4.  **Execute as migrations do Prisma**
+    Este comando irá criar as tabelas no seu banco de dados com base no schema.
+    ```sh
+    npx prisma migrate deploy
+    ```
+
+### Executando a Aplicação
+
+```sh
+# Modo de desenvolvimento
+npm run start:dev
 ```
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
 
-# e2e tests
-$ npm run test:e2e
+---
 
-# test coverage
-$ npm run test:cov
-```
+## ✒️ Autor
 
-## Deployment
+**[Aldovani]**
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+* **LinkedIn:** [https://www.linkedin.com/in/seu-linkedin/](https://www.linkedin.com/in/Aldovani/)
+* **GitHub:** [https://github.com/seu-usuario](https://github.com/Aldovani)
