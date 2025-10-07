@@ -29,7 +29,7 @@ export class DepartmentController {
   @Get()
   async getAll(
     @Query('page', OptionalParseIntPipe) page: number = 1,
-    @Query('page', OptionalParseIntPipe) perPage: number = 1,
+    @Query('perPage', OptionalParseIntPipe) perPage: number = 1,
   ) {
     const { departments, metadata } = await this.departmentService.getAll({
       page,

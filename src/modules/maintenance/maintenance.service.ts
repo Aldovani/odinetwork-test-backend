@@ -3,11 +3,21 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { Maintenance } from 'src/commons/entities/maintenance'
+import {
+  Maintenance,
+  MaintenanceStatus,
+} from 'src/commons/entities/maintenance'
+import { ServicePaginationResponse } from 'src/commons/types/pagination'
 import { PrismaMaintenanceRepository } from 'src/shared/database/repositories/prisma/prisma-maintenance-repository'
 import { AssetService } from '../asset/asset.service'
 import { CreateMaintenanceDTO } from './dto/create-maintenance'
 import { UpdateMaintenanceDTO } from './dto/update-maintenance'
+
+type MaintenanceServiceGetAllRequest = {
+  page: number
+  perPage: number
+  status?: MaintenanceStatus
+}
 
 @Injectable()
 export class MaintenanceService {
@@ -22,10 +32,28 @@ export class MaintenanceService {
     return maintenance
   }
 
-  async getAll(): Promise<Maintenance[]> {
-    const maintenances = await this.maintenanceRepository.findAll()
+  async getAll({
+    page,
+    perPage,
+    status,
+  }: MaintenanceServiceGetAllRequest): Promise<
+    ServicePaginationResponse<Maintenance[]>
+  > {
+    const [maintenances, totalOfMaintenances] =
+      await this.maintenanceRepository.findAll({
+        page,
+        perPage,
+        status,
+      })
 
-    return maintenances
+    const metadata = {
+      currentPage: page,
+      perPage,
+      totalOfPages: Math.round(totalOfMaintenances / page),
+      totalOfItems: totalOfMaintenances,
+    }
+
+    return { metadata, data: maintenances }
   }
 
   async create(props: CreateMaintenanceDTO): Promise<Maintenance> {

@@ -7,7 +7,11 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common'
+import type { MaintenanceStatus } from 'src/commons/entities/maintenance'
+import { OptionalParseEnumPipe } from 'src/shared/pipes/optional-parse-enum-pipe'
+import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 import { MaintenancePresenter } from 'src/shared/presenters/maintenance-presenter'
 import { CreateMaintenanceDTO } from './dto/create-maintenance'
 import { UpdateMaintenanceDTO } from './dto/update-maintenance'
@@ -25,9 +29,18 @@ export class MaintenanceController {
   }
 
   @Get()
-  async getAll() {
-    const employees = await this.maintenanceService.getAll()
-    return MaintenancePresenter.manyToHttp(employees)
+  async getAll(
+    @Query('page', OptionalParseIntPipe) page: number = 1,
+    @Query('perPage', OptionalParseIntPipe) perPage: number = 1,
+    @Query('status', OptionalParseEnumPipe)
+    status: MaintenanceStatus | undefined,
+  ) {
+    const { data, metadata } = await this.maintenanceService.getAll({
+      page,
+      perPage,
+      status,
+    })
+    return { metadata, data: MaintenancePresenter.manyToHttp(data) }
   }
 
   @Post()

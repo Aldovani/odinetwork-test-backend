@@ -1,7 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { Maintenance } from 'src/commons/entities/maintenance'
+import {
+  Maintenance,
+  MaintenanceStatus,
+} from 'src/commons/entities/maintenance'
 import { PrismaService } from '../../prisma.service'
 import { PrismaMaintenanceMapper } from './mappers/prisma-maintenance-mapper'
+
+type PrismaMaintenanceRepositoryGetAllProps = {
+  page: number
+  perPage: number
+  status?: MaintenanceStatus
+}
 
 @Injectable()
 export class PrismaMaintenanceRepository {
@@ -38,12 +47,49 @@ export class PrismaMaintenanceRepository {
     return PrismaMaintenanceMapper.toDomain(maintenance)
   }
 
-  async findAll(): Promise<Maintenance[]> {
-    const maintenance = await this.prismaService.maintenance.findMany({
-      include: { asset: true },
-    })
+  async findAll({
+    page,
+    perPage,
+    status,
+  }: PrismaMaintenanceRepositoryGetAllProps): Promise<[Maintenance[], number]> {
+    const [maintenance, totalOfMaintenances] = await Promise.all([
+      this.prismaService.maintenance.findMany({
+        include: { asset: true },
+        skip: perPage * (page - 1),
+        take: perPage,
+        where: {
+          AND: {
+            completionDate: {
+              equals:
+                status === 'IN_PROGRESS'
+                  ? null
+                  : status === 'FINISHED'
+                    ? ''
+                    : '',
+            },
+          },
+        },
+      }),
+      this.prismaService.maintenance.count({
+        where: {
+          AND: {
+            completionDate: {
+              equals:
+                status === 'IN_PROGRESS'
+                  ? null
+                  : status === 'FINISHED'
+                    ? ''
+                    : '',
+            },
+          },
+        },
+      }),
+    ])
 
-    return maintenance.map(PrismaMaintenanceMapper.toDomain)
+    return [
+      maintenance.map(PrismaMaintenanceMapper.toDomain),
+      totalOfMaintenances,
+    ]
   }
 
   async create(maintenance: Maintenance): Promise<Maintenance> {

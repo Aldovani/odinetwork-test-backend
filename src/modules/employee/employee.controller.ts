@@ -29,7 +29,7 @@ export class EmployeeController {
   @Get()
   async getAll(
     @Query('page', OptionalParseIntPipe) page: number = 1,
-    @Query('page', OptionalParseIntPipe) perPage: number = 1,
+    @Query('perPage', OptionalParseIntPipe) perPage: number = 1,
     @Query('search') search: string = '',
   ) {
     const { employees, metadata } = await this.employeeService.getAll({

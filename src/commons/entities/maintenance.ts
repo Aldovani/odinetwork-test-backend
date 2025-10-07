@@ -1,6 +1,13 @@
 import { Asset } from './asset'
 import { Entity } from './entity'
 
+export const MAINTENANCE_STATUS = {
+  FINISHED: 'FINISHED',
+  IN_PROGRESS: 'IN_PROGRESS',
+} as const
+
+export type MaintenanceStatus = keyof typeof MAINTENANCE_STATUS
+
 export type MaintenanceProps = {
   problemDescription: string
   entryDate: Date
