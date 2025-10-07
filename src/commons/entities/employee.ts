@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { Department } from './department'
 import { Entity } from './entity'
 
@@ -11,26 +12,40 @@ export type EmployeeProps = {
 }
 
 export class Employee extends Entity<EmployeeProps, number> {
+  @ApiProperty()
   get name() {
     return this.props.name
   }
 
+  @ApiProperty()
   get email() {
     return this.props.email
   }
 
+  @ApiProperty()
   get departmentId() {
     return this.props.departmentId
   }
 
+  @ApiProperty({
+    type: Date,
+    example: new Date().toISOString(),
+  })
   get createdAt() {
     return this.props?.createdAt
   }
 
+  @ApiProperty({
+    type: Date,
+    example: new Date().toISOString(),
+  })
   get updatedAt() {
     return this.props?.updatedAt
   }
 
+  @ApiProperty({
+    type: Department,
+  })
   get department() {
     return this.props.department
   }

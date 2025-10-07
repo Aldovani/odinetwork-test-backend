@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { Asset } from './asset'
 import { Entity } from './entity'
 
@@ -19,30 +20,49 @@ export type MaintenanceProps = {
 }
 
 export class Maintenance extends Entity<MaintenanceProps, number> {
+  @ApiProperty()
   get problemDescription() {
     return this.props.problemDescription
   }
 
+  @ApiProperty({
+    type: Date,
+    example: new Date().toISOString(),
+  })
   get entryDate() {
     return this.props.entryDate
   }
 
+  @ApiProperty({
+    type: Date,
+    example: new Date().toISOString(),
+  })
   get completionDate() {
     return this.props.completionDate
   }
 
+  @ApiProperty()
   get assetId() {
     return this.props.assetId
   }
 
+  @ApiProperty()
   get asset() {
     return this.props.asset
   }
 
+  @ApiProperty({
+    type: Date,
+    example: new Date().toISOString(),
+  })
   get updatedAt() {
     return this.props.updatedAt
   }
 
+  @ApiProperty({
+    type: Date,
+    example: new Date().toISOString(),
+  })
   get createdAt() {
     return this.props.createdAt
   }

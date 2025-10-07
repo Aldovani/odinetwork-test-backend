@@ -9,9 +9,12 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
+import { ApiNoContentResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger'
+import { Employee } from 'src/commons/entities/employee'
 import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 import { EmployeePresenter } from 'src/shared/presenters/employee-presenter'
 import { CreateEmployeeDTO } from './dto/create-employee'
+import { GetAllEmployeeDTO } from './dto/get-all-employee'
 import { UpdateEmployeeDTO } from './dto/update-employee'
 import { EmployeeService } from './employee.service'
 
@@ -19,6 +22,9 @@ import { EmployeeService } from './employee.service'
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
+  @ApiOkResponse({
+    type: Employee,
+  })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) employeeId: number) {
     const employee = await this.employeeService.getById(employeeId)
@@ -26,6 +32,31 @@ export class EmployeeController {
     return EmployeePresenter.toHTTP(employee)
   }
 
+  @ApiQuery({
+    name: 'page',
+    example: 1,
+    default: 1,
+    nullable: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'perPage',
+    example: 1,
+    default: 1,
+    nullable: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'search',
+    example: 'John',
+    default: '',
+    description: 'Search by employee name',
+    nullable: true,
+    required: false,
+  })
+  @ApiOkResponse({
+    type: GetAllEmployeeDTO,
+  })
   @Get()
   async getAll(
     @Query('page', OptionalParseIntPipe) page: number = 1,
@@ -54,11 +85,9 @@ export class EmployeeController {
     return EmployeePresenter.toHTTP(employee)
   }
 
-  @Delete(':id')
-  delete(@Param('id', ParseIntPipe) departmentId: number) {
-    return this.employeeService.delete(departmentId)
-  }
-
+  @ApiOkResponse({
+    type: Employee,
+  })
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) employeeId: number,
@@ -70,5 +99,11 @@ export class EmployeeController {
       name,
     })
     return EmployeePresenter.toHTTP(employee)
+  }
+
+  @ApiNoContentResponse()
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) departmentId: number) {
+    return this.employeeService.delete(departmentId)
   }
 }

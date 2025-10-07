@@ -11,13 +11,16 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
+import { ApiOkResponse, ApiQuery } from '@nestjs/swagger'
 import {
+  Maintenance,
   MAINTENANCE_STATUS,
   type MaintenanceStatus,
 } from 'src/commons/entities/maintenance'
 import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 import { MaintenancePresenter } from 'src/shared/presenters/maintenance-presenter'
 import { CreateMaintenanceDTO } from './dto/create-maintenance'
+import { GetAllMaintenanceDTO } from './dto/get-all-maintenance'
 import { UpdateMaintenanceDTO } from './dto/update-maintenance'
 import { MaintenanceService } from './maintenance.service'
 
@@ -25,6 +28,9 @@ import { MaintenanceService } from './maintenance.service'
 export class MaintenanceController {
   constructor(private readonly maintenanceService: MaintenanceService) {}
 
+  @ApiOkResponse({
+    type: Maintenance,
+  })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) assetId: number) {
     const asset = await this.maintenanceService.getById(assetId)
@@ -32,6 +38,32 @@ export class MaintenanceController {
     return MaintenancePresenter.toHTTP(asset)
   }
 
+  @ApiQuery({
+    name: 'page',
+    example: 1,
+    default: 1,
+    nullable: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'perPage',
+    example: 1,
+    default: 1,
+    nullable: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'status',
+    example: MAINTENANCE_STATUS.IN_PROGRESS,
+    default: undefined,
+    nullable: true,
+    required: false,
+    enum: MAINTENANCE_STATUS,
+    enumName: 'MAINTENANCE_STATUS',
+  })
+  @ApiOkResponse({
+    type: GetAllMaintenanceDTO,
+  })
   @Get()
   async getAll(
     @Query('page', OptionalParseIntPipe) page: number = 1,
@@ -65,11 +97,9 @@ export class MaintenanceController {
     return MaintenancePresenter.toHTTP(maintenance)
   }
 
-  @Delete(':id')
-  delete(@Param('id', ParseIntPipe) departmentId: number) {
-    return this.maintenanceService.delete(departmentId)
-  }
-
+  @ApiOkResponse({
+    type: Maintenance,
+  })
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) maintenanceId: number,
@@ -82,5 +112,10 @@ export class MaintenanceController {
       problemDescription,
     })
     return MaintenancePresenter.toHTTP(asset)
+  }
+
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) departmentId: number) {
+    return this.maintenanceService.delete(departmentId)
   }
 }

@@ -9,16 +9,22 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
+import { ApiOkResponse, ApiQuery } from '@nestjs/swagger'
+import { Asset } from 'src/commons/entities/asset'
 import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 import { AssetPresenter } from 'src/shared/presenters/asset-presenter'
 import { AssetService } from './asset.service'
 import { CreateAssetDTO } from './dto/create-asset'
+import { GetAllAssetDTO } from './dto/get-all-asset'
 import { UpdateAssetDTO } from './dto/update-asset'
 
 @Controller('asset')
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
 
+  @ApiOkResponse({
+    type: Asset,
+  })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) assetId: number) {
     const asset = await this.assetService.getById(assetId)
@@ -26,6 +32,44 @@ export class AssetController {
     return AssetPresenter.toHTTP(asset)
   }
 
+  @ApiQuery({
+    name: 'page',
+    example: 1,
+    default: 1,
+    nullable: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'perPage',
+    example: 1,
+    default: 1,
+    nullable: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'serialNumber',
+    example: 142,
+    default: undefined,
+    nullable: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'imei',
+    example: 145812342,
+    default: undefined,
+    nullable: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'prefix',
+    example: 'DK',
+    default: undefined,
+    nullable: true,
+    required: false,
+  })
+  @ApiOkResponse({
+    type: GetAllAssetDTO,
+  })
   @Get()
   async getAll(
     @Query('page', OptionalParseIntPipe) page: number = 1,
@@ -46,6 +90,9 @@ export class AssetController {
     return { metadata, data: AssetPresenter.manyToHttp(data) }
   }
 
+  @ApiOkResponse({
+    type: Asset,
+  })
   @Post()
   async create(
     @Body()
@@ -70,11 +117,9 @@ export class AssetController {
     return AssetPresenter.toHTTP(asset)
   }
 
-  @Delete(':id')
-  delete(@Param('id', ParseIntPipe) departmentId: number) {
-    return this.assetService.delete(departmentId)
-  }
-
+  @ApiOkResponse({
+    type: Asset,
+  })
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) assetId: number,
@@ -91,5 +136,10 @@ export class AssetController {
       serialNumber,
     })
     return AssetPresenter.toHTTP(asset)
+  }
+
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) departmentId: number) {
+    return this.assetService.delete(departmentId)
   }
 }

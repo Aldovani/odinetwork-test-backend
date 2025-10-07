@@ -1,7 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger'
+
 export abstract class Entity<Props, ID> {
   private _id: ID | undefined
   protected props: Props
 
+  @ApiProperty({
+    type: 'number',
+    example: 2,
+  })
   get id() {
     return this._id
   }
