@@ -34,7 +34,7 @@ export class EmployeeService {
     email,
   }: CreateEmployeeDTO): Promise<Employee> {
     const [department] = await Promise.all([
-      this.departmentService.getDepartmentById(departmentId),
+      this.departmentService.getById(departmentId),
       this.isEmailAlreadyExists(email),
     ])
 
@@ -56,7 +56,7 @@ export class EmployeeService {
     if (!employeeExist) throw new NotFoundException('Employee not found')
 
     if (employeeExist.departmentId !== props.departmentId) {
-      const department = await this.departmentService.getDepartmentById(
+      const department = await this.departmentService.getById(
         props.departmentId,
       )
 

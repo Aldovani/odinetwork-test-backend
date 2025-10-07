@@ -17,13 +17,13 @@ export class DepartmentService {
     private readonly departmentRepository: PrismaDepartmentRepository,
   ) {}
 
-  async getDepartmentById(departmentId: number) {
+  async getById(departmentId: number) {
     const department = await this.departmentRepository.findById(departmentId)
     if (!department) throw new NotFoundException('Department not found')
     return department
   }
 
-  async getDepartments({ page, perPage }: PaginationProps): Promise<{
+  async getAll({ page, perPage }: PaginationProps): Promise<{
     departments: Department[]
     metadata: PaginationMetadataProps
   }> {

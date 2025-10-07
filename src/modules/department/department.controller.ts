@@ -9,11 +9,11 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
+import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 import { DepartmentPresenter } from 'src/shared/presenters/department-presenter'
 import { DepartmentService } from './department.service'
 import { CreateDepartmentDTO } from './dto/create-department'
 import { UpdateDepartmentDTO } from './dto/update-department'
-import { OptionalParseIntPipe } from 'src/shared/pipes/optional-parse-int-pipe'
 
 @Controller('department')
 export class DepartmentController {
@@ -21,8 +21,7 @@ export class DepartmentController {
 
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) departmentId: number) {
-    const department =
-      await this.departmentService.getDepartmentById(departmentId)
+    const department = await this.departmentService.getById(departmentId)
 
     return DepartmentPresenter.toHTTP(department)
   }
@@ -32,11 +31,10 @@ export class DepartmentController {
     @Query('page', OptionalParseIntPipe) page: number = 1,
     @Query('page', OptionalParseIntPipe) perPage: number = 1,
   ) {
-    const { departments, metadata } =
-      await this.departmentService.getDepartments({
-        page,
-        perPage,
-      })
+    const { departments, metadata } = await this.departmentService.getAll({
+      page,
+      perPage,
+    })
     return {
       metadata,
       data: DepartmentPresenter.manyToHttp(departments),

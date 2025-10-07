@@ -30,7 +30,7 @@ export class AssetService {
     const { IMEI, departmentId, employeeId, name, prefix, serialNumber } = props
 
     const [department, employee] = await Promise.all([
-      this.departmentService.getDepartmentById(departmentId),
+      this.departmentService.getById(departmentId),
       this.employeeService.getById(employeeId),
     ])
 
@@ -54,7 +54,7 @@ export class AssetService {
     const assetExist = await this.getById(id)
 
     if (props.departmentId && assetExist.departmentId !== props.departmentId) {
-      const department = await this.departmentService.getDepartmentById(
+      const department = await this.departmentService.getById(
         props.departmentId,
       )
 
